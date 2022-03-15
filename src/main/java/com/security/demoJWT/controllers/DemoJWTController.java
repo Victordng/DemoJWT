@@ -74,7 +74,7 @@ public class DemoJWTController {
         courseService.deleteCourse(id);
     }
 
-    @GetMapping(value = "/categories",produces = {APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/categories",produces = {APPLICATION_JSON_VALUE})
     public CourseCategory saveCategory(@RequestBody CourseCategory category) {
         return categoryService.saveCategory(category);
     }
@@ -95,7 +95,7 @@ public class DemoJWTController {
     }
 
     @GetMapping(value = "/categories",produces = {APPLICATION_JSON_VALUE})
-    public List<CourseCategory> findAllCategories() {
+    public List<CourseCategory> findCategories() {
         return categoryService.findAllCategories();
     }
 }
