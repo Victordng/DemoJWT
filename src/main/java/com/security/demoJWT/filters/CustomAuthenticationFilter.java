@@ -51,13 +51,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     .withSubject(username)
                     .withIssuer(request.getRequestURL().toString())
                     .withClaim("roles",roles)
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 10*60*1000))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 40*60*1000))
                     .sign(algorithm);
 
             String refresh_token = JWT.create()
                     .withSubject(username)
                     .withIssuer(request.getRequestURL().toString())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 30*60*1000))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 60*60*1000))
                     .sign(algorithm);
 
             response.setContentType(APPLICATION_JSON_VALUE);

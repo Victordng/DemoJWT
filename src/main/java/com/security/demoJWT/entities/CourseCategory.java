@@ -1,5 +1,7 @@
 package com.security.demoJWT.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,5 @@ public class CourseCategory implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
     private String categoryName;
-    @OneToMany(mappedBy = "category",fetch = FetchType.EAGER)
-    private List<Course> courses;
+
 }

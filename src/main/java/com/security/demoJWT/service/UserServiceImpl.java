@@ -1,7 +1,10 @@
 package com.security.demoJWT.service;
 
+import com.security.demoJWT.entities.Course;
 import com.security.demoJWT.entities.User;
+import com.security.demoJWT.repositories.CourseRepository;
 import com.security.demoJWT.repositories.UserRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +26,7 @@ import java.util.stream.Stream;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -66,6 +70,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public void addCourseToUser(Long courseId, String matricule) {
+        Course course = courseRepository.findById(courseId).get();
+        User user = userRepository.findUserByMatricule(matricule);
+        if(course!=null && user!=null){
+            user.getCourses().add(course);
+            userRepository.save(user);
+        }
+    }
+
+    @Override
+    public void deleteCourseToUser(Long courseId, String matricule) {
+        Optional<Course> course = courseRepository.findById(courseId);
+        User user = userRepository.findUserByMatricule(matricule);
+        if(course.isPresent() && user!=null){
+            int index = user.getCourses().indexOf(course.get().getCourseName());
+            user.getCourses().remove(index+1);
+            userRepository.save(user);
+        }
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username);
 
@@ -76,3 +101,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }else throw new UsernameNotFoundException(String.format("user with username %s not found!",username));
     }
 }
+
+

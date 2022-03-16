@@ -1,10 +1,12 @@
 package com.security.demoJWT.securities;
 
 import com.security.demoJWT.filters.CustomAuthenticationFilter;
+import com.security.demoJWT.filters.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +15,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
@@ -41,12 +46,15 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/api/login","/api/refresToken").permitAll();
-        http.addFilter(customAuthenticationFilter);
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/addcourse/**","/api/deletecourse/**").hasAnyAuthority("STUDENT");
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/**","/api/courses/**","/api/courses/**").hasAnyAuthority("STUDENT","PROFESSOR");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/users/**","/api/courses/**","/api/courses/**").hasAnyAuthority("PROFESSOR");
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/users/**","/api/courses/**","/api/courses/**").hasAnyAuthority("PROFESSOR");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/users/**","/api/courses/**","/api/courses/**").hasAnyAuthority("PROFESSOR");
-      //  http.addFilterBefore()
+        http.authorizeRequests().anyRequest().authenticated();
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.logout();
 
     }
 }

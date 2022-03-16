@@ -12,4 +12,6 @@ public interface UserService {
     void deleteUser(Long id);
     User findById(Long id);
     List<User> findAllUsers();
+    void addCourseToUser(Long courseId, String matricule);
+    void deleteCourseToUser(Long courseId, String matricule);
 }
